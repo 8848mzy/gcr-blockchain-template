@@ -1,0 +1,112 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer.%DOMAIN_NAME%:
+  peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%:
+  peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%:
+  peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%:
+
+networks:
+  byfn:
+
+services:
+
+  orderer.%DOMAIN_NAME%:
+    extends:
+      file:   docker-compose-base.yaml
+      service: orderer.%DOMAIN_NAME%
+    container_name: orderer.%DOMAIN_NAME%
+    networks:
+      - byfn
+
+  peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%:
+    container_name: peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%
+    extends:
+      file: docker-compose-base.yaml
+      service: peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%
+    networks:
+      - byfn
+
+  peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%:
+    container_name: peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%
+    extends:
+      file:  docker-compose-base.yaml
+      service: peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%
+    networks:
+      - byfn
+
+  peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%:
+    container_name: peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%
+    extends:
+      file:  docker-compose-base.yaml
+      service: peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%
+    networks:
+      - byfn
+
+  cli:
+    container_name: cli
+    image: %REPO_URL%fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      #- CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_LEVEL=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%:7051
+      - CORE_PEER_LOCALMSPID=%LC_ORG_NAME_1%MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/%LC_ORG_NAME_1%.%DOMAIN_NAME%/peers/peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/%LC_ORG_NAME_1%.%DOMAIN_NAME%/peers/peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/%LC_ORG_NAME_1%.%DOMAIN_NAME%/peers/peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt /gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/%LC_ORG_NAME_1%.%DOMAIN_NAME%/users/Admin@%LC_ORG_NAME_1%.%DOMAIN_NAME%/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - %FABRIC_CFG_PATH%/chaincode/:/opt/gopath/src/github.com/chaincode
+        - %FABRIC_CFG_PATH%/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - %FABRIC_CFG_PATH%/scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - %FABRIC_CFG_PATH%/channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+        - %FABRIC_CFG_PATH%/tools-bin/:/opt/gopath/src/github.com/hyperledger/fabric/tools-bin
+        - %FABRIC_CFG_PATH%/network-management-scripts/:/opt/gopath/src/github.com/hyperledger/fabric/network-management-scripts
+    depends_on:
+      - orderer.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%
+    networks:
+      - byfn
+
+  fabric-explorer-db:
+    container_name: fabric-explorer-db
+    image: %REPO_URL%fabric-explorer-db:latest
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password123
+    networks:
+      - byfn
+
+  fabric-explorer:
+    container_name: fabric-explorer
+    image: %REPO_URL%fabric-explorer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - fabric-explorer-db
+      - orderer.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%
+    networks:
+      - byfn
+    volumes:
+      - /etc/fabric:/etc/fabric

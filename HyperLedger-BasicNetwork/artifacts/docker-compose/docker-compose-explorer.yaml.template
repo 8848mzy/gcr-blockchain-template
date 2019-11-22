@@ -1,0 +1,38 @@
+ # Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+networks:
+  byfn:
+
+services:
+
+  fabric-explorer-db:
+    container_name: fabric-explorer-db
+    image: hyperledger/fabric-explorer-db:$IMAGE_TAG
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password123
+    networks:
+      - byfn
+
+  fabric-explorer:
+    container_name: fabric-explorer
+    image: hyperledger/fabric-explorer:$IMAGE_TAG
+    ports:
+      - "8080:8080"
+    depends_on:
+      - fabric-explorer-db
+      - orderer.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%
+      - peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%
+    networks:
+      - byfn
+    volumes:
+      - /etc/fabric:/etc/fabric

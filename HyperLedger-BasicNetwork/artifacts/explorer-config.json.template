@@ -1,0 +1,58 @@
+{
+        "network-config": {
+                "%LC_ORG_NAME_1%": {
+                        "name": "peer0-%LC_ORG_NAME_1%",
+                        "mspid": "%LC_ORG_NAME_1%MSP",
+                        "peer1": {
+                                "requests": "grpcs://%PEER0_ORG1_ADDRESS%:7051",
+                                "events": "grpcs://%PEER0_ORG1_ADDRESS%:7053",
+                                "server-hostname": "peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%",
+                                "tls_cacerts": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_1%.%DOMAIN_NAME%/peers/peer0.%LC_ORG_NAME_1%.%DOMAIN_NAME%/tls/ca.crt"
+                        },
+                        "admin": {
+                                "key": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_1%.%DOMAIN_NAME%/users/Admin@%LC_ORG_NAME_1%.%DOMAIN_NAME%/msp/keystore",
+                                "cert": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_1%.%DOMAIN_NAME%/users/Admin@%LC_ORG_NAME_1%.%DOMAIN_NAME%/msp/signcerts"
+                        }
+                },
+                "%LC_ORG_NAME_2%": {
+                        "name": "peer0-%LC_ORG_NAME_2%",
+                        "mspid": "%LC_ORG_NAME_2%MSP",
+                        "peer1": {
+                                "requests": "grpcs://%PEER0_ORG2_ADDRESS%:8051",
+                                "events": "grpcs://%PEER0_ORG2_ADDRESS%:8053",
+                                "server-hostname": "peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%",
+                                "tls_cacerts": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_2%.%DOMAIN_NAME%/peers/peer0.%LC_ORG_NAME_2%.%DOMAIN_NAME%/tls/ca.crt"
+                        },
+                        "admin": {
+                                "key": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_2%.%DOMAIN_NAME%/users/Admin@%LC_ORG_NAME_2%.%DOMAIN_NAME%/msp/keystore",
+                                "cert": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_2%.%DOMAIN_NAME%/users/Admin@%LC_ORG_NAME_2%.%DOMAIN_NAME%/msp/signcerts"
+                        }
+                },
+                "%LC_ORG_NAME_3%": {
+                        "name": "peer0-%LC_ORG_NAME_3%",
+                        "mspid": "%LC_ORG_NAME_3%MSP",
+                        "peer1": {
+                                "requests": "grpcs://%PEER0_ORG3_ADDRESS%:9051",
+                                "events": "grpcs://%PEER0_ORG3_ADDRESS%:9053",
+                                "server-hostname": "peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%",
+                                "tls_cacerts": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_3%.%DOMAIN_NAME%/peers/peer0.%LC_ORG_NAME_3%.%DOMAIN_NAME%/tls/ca.crt"
+                        },
+                        "admin": {
+                                "key": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_3%.%DOMAIN_NAME%/users/Admin@%LC_ORG_NAME_3%.%DOMAIN_NAME%/msp/keystore",
+                                "cert": "/etc/fabric/crypto-config/peerOrganizations/%LC_ORG_NAME_3%.%DOMAIN_NAME%/users/Admin@%LC_ORG_NAME_3%.%DOMAIN_NAME%/msp/signcerts"
+                        }
+                }
+        },
+        "host": "localhost",
+        "port": "8080",
+        "channel": "%CHANNEL_NAME%",
+        "keyValueStore": "/tmp/fabric-client-kvs",
+        "eventWaitTime": "30000",
+        "pg": {
+                "host": "%EXPLORER_DB_ADDRESS%",
+                "port": "5432",
+                "database": "fabricexplorer",
+                "username": "postgres",
+                "passwd": "password123"
+        }
+}
